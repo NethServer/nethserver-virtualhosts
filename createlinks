@@ -25,17 +25,20 @@ use File::Path;
 # create
 event_actions('vhost-create', qw(
 	     nethserver-vhosts-set-permissions 20
+             nethserver-virtualhosts-setbasicpassword 30
 ));
 
 # modify
 event_actions('vhost-modify', qw(
 	     nethserver-vhosts-set-permissions 20
+             nethserver-virtualhosts-setbasicpassword 30
 ));
 
 # delete
-event_actions('vhost-delete', 
-	     'nethserver-vhosts-vhost-delete' => '15'
-    );
+event_actions('vhost-delete', qw(
+	     nethserver-vhosts-delete 15
+             nethserver-virtualhosts-setbasicpassword 30
+));
 
 
 #--------------------------------------------------
@@ -46,6 +49,7 @@ my $event = 'nethserver-virtualhosts-update';
 
 event_actions($event, qw(
 	     initialize-default-databases 00
+             nethserver-virtualhosts-setbasicpassword 40
 ));
 
 event_templates('nethserver-httpd-update', qw(
