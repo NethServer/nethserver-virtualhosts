@@ -17,9 +17,10 @@
 
     for my $vhost ( $adb->get_all_by_prop( type => 'vhost' ) )
     {
-        my %props = $vhost->props;
-        $props{status} ||= 'enabled';
-        next if ($props{status} eq 'disabled');
+        my $status = $vhost->prop('FtpStatus') || 'disabled';
+        next if ($status eq 'disabled');
+        my $pass = $vhost->prop('FtpPassword') || '';
+        next if ($pass eq '');
 
         $OUT .= $vhost->key . "\n";
    }
