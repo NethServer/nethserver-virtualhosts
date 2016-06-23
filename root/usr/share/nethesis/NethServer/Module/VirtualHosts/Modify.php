@@ -1,4 +1,5 @@
 <?php
+
 namespace NethServer\Module\VirtualHosts;
 
 /*
@@ -32,64 +33,127 @@ class Modify extends \Nethgui\Controller\Table\Modify
 
     public function initialize()
     {
-        $virtualHostValidator = $this->createValidator()->orValidator($this->createValidator(Validate::HOSTNAME_FQDN), $this->createValidator()->equalTo('__ANY__'));
-        
+
         $schema = array(
             array('name', Validate::USERNAME, Table::KEY),
-            array('Description', Validate::ANYTHING, Table::FIELD, 'Description'),
-            array('Status', Validate::SERVICESTATUS, Table::FIELD, 'status'),
-            array('VirtualHost', $virtualHostValidator, Table::FIELD, 'VirtualHost'),
-            array('PasswordStatus', Validate::SERVICESTATUS, Table::FIELD, 'PasswordStatus'),
-            array('PasswordValue', Validate::NOTEMPTY, Table::FIELD, 'PasswordValue'),
-            array('Access', $this->createValidator()->memberOf('public', 'private'), Table::FIELD, 'Access'),
-            array('CgiBin', Validate::SERVICESTATUS, Table::FIELD, 'CgiBinStatus'),
-            array('AliasType', $this->createValidator()->memberOf('default', 'root', 'custom'), Table::FIELD, 'AliasType'),
-            array('AliasCustom', '/^([a-z]|[0-9]){1,12}$/', Table::FIELD, 'AliasCustom'),
-            array('ForceSsl', Validate::SERVICESTATUS, Table::FIELD, 'ForceSslStatus'),
-            array('AllowOverride', Validate::SERVICESTATUS, Table::FIELD, 'AllowOverrideStatus'),
+            array('Description', Validate::ANYTHING, Table::FIELD),
+            array('ServerNames', Validate::NOTEMPTY, Table::FIELD),
+            array('PasswordStatus', Validate::SERVICESTATUS, Table::FIELD),
+            array('PasswordValue', Validate::NOTEMPTY, Table::FIELD),
+            array('Access', $this->createValidator()->memberOf('public', 'private'), Table::FIELD),
+            array('ForceSslStatus', Validate::SERVICESTATUS, Table::FIELD),
+            array('SslCertificate', Validate::ANYTHING, Table::FIELD),
+            array('FtpStatus', Validate::SERVICESTATUS, Table::FIELD),
+            array('FtpPassword', Validate::NOTEMPTY, Table::FIELD),
         );
-
-        $this
-            ->setDefaultValue('Status', 'enabled')
-            ->setDefaultValue('PasswordValue', '')
-            ->setDefaultValue('PasswordStatus', 'disabled')
-            ->setDefaultValue('Access', 'private')
-            ->setDefaultValue('CgiBin', 'disabled')
-            ->setDefaultValue('AliasType', 'default')
-            ->setDefaultValue('ForceSsl', 'disabled')
-            ->setDefaultValue('AllowOverride', 'disabled')
-        ;
 
         $this->setSchema($schema);
 
+        $this->declareParameter('CreateHostRecords', Validate::ANYTHING);
+
+        $this
+                ->setDefaultValue('PasswordValue', '')
+                ->setDefaultValue('PasswordStatus', 'disabled')
+                ->setDefaultValue('Access', 'private')
+                ->setDefaultValue('ForceSslStatus', 'disabled')
+                ->setDefaultValue('FtpStatus', 'disabled')
+                ->setDefaultValue('FtpPassword', '')
+                ->setDefaultValue('CreateHostRecords', '1')
+        ;
+
+        if ($this->getIdentifier() === 'delete') {
+            $this->setViewTemplate('Nethgui\Template\Table\Delete');
+        }
         parent::initialize();
+    }
+
+    public function validate(\Nethgui\Controller\ValidationReportInterface $report)
+    {
+        parent::validate($report);
+        if ( ! $this->getRequest()->isMutation()) {
+            return;
+        }
+        $serverList = explode(',', $this->sanitizeServerNames($this->parameters['ServerNames']));
+        $validHostname = $this->createValidator()->hostname();
+        foreach ($serverList as $serverName) {
+            if ( ! $validHostname->evaluate($serverName)) {
+                $report->addValidationError($this, 'ServerNames', $validHostname);
+            }
+        }
+    }
+
+    public function readServerNames($v)
+    {
+        return str_replace(',', ', ', $v);
+    }
+
+    public function writeServerNames($s)
+    {
+        $v = $this->sanitizeServerNames($s);
+        return array($v);
+    }
+
+    protected function sanitizeServerNames($s)
+    {
+        return preg_replace('/[;,\s]+/', ',', $s);
+    }
+
+    protected function processCreate($key)
+    {
+        $this->getAdapter()->offsetSet('status', 'enabled');
+
+        if ($this->parameters['CreateHostRecords'] !== '1') {
+            return;
+        }
+
+        $serverList = explode(',', $this->sanitizeServerNames($this->parameters['ServerNames']));
+        $hostsDb = $this->getPlatform()->getDatabase('hosts');
+        foreach ($serverList as $serverName) {
+            if( ! $hostsDb->getKey($serverName)) {
+                $hostsDb->setKey($serverName, 'self', array('Description' => $this->parameters['Description'] || 'Virtual host'));
+            }
+        }
+
+        $this->getPlatform()->signalEvent('host-modify', array(\Nethgui\array_head($serverList)));
+    }
+
+    protected function onParametersSaved($changedParameters)
+    {
+        parent::onParametersSaved($changedParameters);
+
+        $action = $this->getIdentifier();
+        if($action === 'update') {
+            $action = 'modify';
+        }
+
+        $this->getPlatform()->signalEvent('vhost-' . $action, array($this->parameters['name']));
+    }
+
+    protected function getSslCertificateDatasource()
+    {
+        static $ds;
+        if (isset($ds)) {
+            return $ds;
+        }
+
+        $output = array();
+        \exec('/usr/libexec/nethserver/cert-list', $output);
+        $data = json_decode($output[0], TRUE);
+        if ( ! is_array($data)) {
+            $data = array();
+        }
+
+        foreach ($data as $key => $value) {
+            $ds[] = array($key, $value['file']);
+        }
+
+        return $ds;
     }
 
     public function prepareView(\Nethgui\View\ViewInterface $view)
     {
         parent::prepareView($view);
-
-        $view['VirtualHostDatasource'] = array_merge(
-            array(array('__ANY__', $view->translate('ANY_VHOST'))),
-            $this->getVirtualHostDatasource()
-        );
-    }
-
-    public function getVirtualHostDatasource()
-    {
-        $ds = array();
-
-        foreach ($this->getPlatform()->getDatabase('hosts')->getAll('self') as $hostName => $record) {
-            if (isset($record['Description'])
-                && $record['Description']) {
-                $description = sprintf("%s (%s)", $hostName, trim($record['Description']));
-            } else {
-                $description = $hostName;
-            }
-            $ds[] = array($hostName, $description);
-        }
-
-        return $ds;
+        $view['SslCertificateDatasource'] = array_merge(array(array('', $view->translate('Default_Ssl_certificate_label'))), $this->getSslCertificateDatasource());
     }
 
 }

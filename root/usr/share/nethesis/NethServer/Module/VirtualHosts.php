@@ -1,4 +1,5 @@
 <?php
+
 namespace NethServer\Module;
 
 /*
@@ -39,16 +40,19 @@ class VirtualHosts extends \Nethgui\Controller\TableController
         $columns = array(
             'Key',
             'Description',
+            'ServerNames',
             'Actions'
         );
 
         $this
-            ->setTableAdapter($this->getPlatform()->getTableAdapter('vhosts', 'vhost'))
-            ->setColumns($columns)
-            ->addTableAction(new \NethServer\Module\VirtualHosts\Modify('create'))            
-            ->addTableAction(new \Nethgui\Controller\Table\Help('Help'))
-            ->addRowAction(new \NethServer\Module\VirtualHosts\Modify('update'))            
-            ->addRowAction(new \Nethgui\Controller\Table\Modify('delete', $parameterSchema, 'Nethgui\Template\Table\Delete'))
+                ->setTableAdapter($this->getPlatform()->getTableAdapter('vhosts', 'vhost'))
+                ->setColumns($columns)
+                ->addTableAction(new \NethServer\Module\VirtualHosts\Modify('create'))
+                ->addTableAction(new \Nethgui\Controller\Table\Help('Help'))
+                ->addRowAction(new \NethServer\Module\VirtualHosts\Modify('update'))
+                ->addRowAction(new \NethServer\Module\VirtualHosts\Toggle('enable'))
+                ->addRowAction(new \NethServer\Module\VirtualHosts\Toggle('disable'))
+                ->addRowAction(new \NethServer\Module\VirtualHosts\Modify('delete'))
         ;
 
         parent::initialize();
@@ -56,8 +60,29 @@ class VirtualHosts extends \Nethgui\Controller\TableController
 
     public function onParametersSaved(\Nethgui\Module\ModuleInterface $currentAction, $changes, $parameters)
     {
-    #    $this->getPlatform()->signalEvent('static-routes-save@post-process');
+        #    $this->getPlatform()->signalEvent('static-routes-save@post-process');
     }
 
-}
+    public function prepareViewForColumnActions(\Nethgui\Controller\Table\Read $action, \Nethgui\View\ViewInterface $view, $key, $values, &$rowMetadata)
+    {
+        $cellView = $action->prepareViewForColumnActions($view, $key, $values, $rowMetadata);
+        if ($values['status'] === 'disabled') {
+            unset($cellView['disable']);
+        } elseif ($values['status'] === 'enabled') {
+            unset($cellView['enable']);
+        }        
+        return $cellView;
+    }
 
+    public function prepareViewForColumnKey(\Nethgui\Controller\Table\Read $action, \Nethgui\View\ViewInterface $view, $key, $values, &$rowMetadata)
+    {       
+        if ($values['status'] === 'disabled') {
+            $rowMetadata['rowCssClass'] = trim($rowMetadata['rowCssClass'] . ' user-locked');
+        }
+        return strval($key);
+    }
+
+    public function prepareViewForColumnServerNames(\Nethgui\Controller\Table\Read $action, \Nethgui\View\ViewInterface $view, $key, $values, &$rowMetadata) {
+        return str_replace(',', ', ', $values['ServerNames']);
+    }
+}
