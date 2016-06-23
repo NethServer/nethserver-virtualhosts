@@ -1,0 +1,20 @@
+{
+    use esmith::ConfigDB;
+
+    my $adb = esmith::ConfigDB->open_ro('vhosts') or die "Couldn't open VhostsDB\n";
+    my $usertype = $vsftpd{'UserType'} || 'virtual';
+ 
+    if ($usertype ne 'virtual') {
+        return '';
+    }
+    
+    for my $vhost ( $adb->get_all_by_prop( type => 'vhost' ) )
+    {
+        my %props = $vhost->props;
+        $props{FtpPassword} ||= '';
+        next if ($props{FtpPassword} eq '');
+
+        $OUT .= $vhost->key . "\n";
+        $OUT .= $props{FtpPassword} . "\n";
+    }
+}
