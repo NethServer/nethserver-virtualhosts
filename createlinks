@@ -71,25 +71,15 @@ event_templates('nethserver-httpd-update', qw(
 ));
 
 
-#--------------------------------------------------
-# actions for nethserver-virtualhosts-save event
-#--------------------------------------------------
 
-$event = 'nethserver-virtualhosts-save';
+#--------------------------------------------------
+# actions for nethserver-vsftpd-save event
+#--------------------------------------------------
+$event = 'nethserver-vsftpd-save';
 
 event_actions($event, qw(
-             initialize-default-databases 00
+             nethserver-virtualhosts-ftp-chroot 30 
 ));
-
-event_templates($event, qw(
-                /etc/httpd/conf.d/virtualhosts.conf
-));
-
-event_services($event, qw(
-               httpd restart
-               vsftpd restart
-));
-
 
 #--------------------------------------------------
 # actions for vhost-name validator
