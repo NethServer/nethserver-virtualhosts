@@ -1,0 +1,18 @@
+#
+# 30forcessl_redirect { $ForceSslStatus }
+# see https://wiki.apache.org/httpd/RewriteHTTPToHTTPS
+#
+{
+    $OUT = '';
+
+    if( $ForceSslStatus eq 'enabled') {
+	$OUT .= <<REDIRECT;
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^${VhostName}(/.*) https://%{SERVER_NAME}${VhostName}\$1 [R,L]
+REDIRECT
+    } else {
+	$OUT = '';
+    }
+}
+
