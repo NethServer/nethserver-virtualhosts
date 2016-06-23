@@ -25,12 +25,17 @@ use File::Path;
 # create
 event_actions('vhost-create', qw(
 	     nethserver-vhosts-set-permissions 20
+<<<<<<< 4155693e06bbcbe3e5a80b18f7d32d07a5f8c923
              nethserver-virtualhosts-setbasicpassword 30
+=======
+             nethserver-virtualhosts-ftp 60
+>>>>>>> FTP: configure vsftpd using nethserver-vsftpd-save event
 ));
 
 # modify
 event_actions('vhost-modify', qw(
 	     nethserver-vhosts-set-permissions 20
+<<<<<<< 4155693e06bbcbe3e5a80b18f7d32d07a5f8c923
              nethserver-virtualhosts-setbasicpassword 30
 ));
 
@@ -38,6 +43,15 @@ event_actions('vhost-modify', qw(
 event_actions('vhost-delete', qw(
 	     nethserver-vhosts-delete 15
              nethserver-virtualhosts-setbasicpassword 30
+=======
+             nethserver-virtualhosts-ftp 60
+));
+
+# delete
+event_actions('vhost-delete', qw( 
+	     nethserver-vhosts-vhost-delete 15
+             nethserver-virtualhosts-ftp 60
+>>>>>>> FTP: configure vsftpd using nethserver-vsftpd-save event
 ));
 
 
@@ -69,7 +83,6 @@ event_actions($event, qw(
 
 event_templates($event, qw(
                 /etc/httpd/conf.d/virtualhosts.conf
-                /etc/vsftpd/user_list
 ));
 
 event_services($event, qw(
