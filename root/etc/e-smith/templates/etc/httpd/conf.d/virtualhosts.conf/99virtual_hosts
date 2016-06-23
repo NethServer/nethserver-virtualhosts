@@ -1,0 +1,52 @@
+{
+    #
+    # 99virtual_hosts -- expand .vhost templates under nethserver.d/
+    # directory
+    #
+
+    use esmith::templates;
+    use esmith::ConfigDB;
+    my $vdb = esmith::ConfigDB->open_ro('vhosts') || die("Can't open vhosts db");
+
+    foreach my $vhost ($vdb->get_all_by_prop('type'=>'vhost')) {
+	my %vhostData = $vhost->props();
+	my @ports = (80);
+        $vhostData{VhostName} = $vhost->key;
+
+       #skip if vhost status is not enabled
+        if($vhostData{status} ne 'enabled'){
+            next;
+        }
+ 
+	if(defined $vhostData{SslMode}) {
+	   if($vhostData{SslMode} eq 'required') {
+	       @ports = (443);
+	   } elsif($vhostData{SslMode} eq 'optional') {
+	       @ports = (443, 80);
+	   } 	    
+	}
+
+	if( ! $vhostData{VhostProfile} ) {
+	    $vhostData{VhostProfile} = 'default';
+	}
+
+        #set virtual host name as document root under /var/lib/nethserver/vhost/
+	if( ! $vhostData{DocumentRoot} ) {
+	    $vhostData{DocumentRoot} = $defaultDocumentRoot || '/var/lib/nethserver/vhost/'.$vhostData{VhostName};
+	}
+
+	$vhostData{ServerName} = $vhostName;
+       
+	foreach $port (@ports) {
+	    $vhostData{Port} = $port;
+	    $OUT .= esmith::templates::processTemplate({
+		MORE_DATA => \%vhostData,
+		TEMPLATE_PATH => 'httpd/vhost-default',
+		OUTPUT_TYPE => 'string',
+	    });
+	}
+
+	delete $vhostData{Port};
+    }
+
+}
