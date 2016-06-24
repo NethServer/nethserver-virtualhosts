@@ -1,0 +1,15 @@
+        # authentication {{$PasswordStatus}}
+{
+
+	if($PasswordStatus eq 'enabled') {
+	    my $authName = $Description || $Name;
+	    $OUT .= <<PASSWORD
+        AuthType Basic
+        AuthName "$authName"
+        AuthUserFile conf/basic.htpasswd
+        Require user $VhostName
+PASSWORD
+	}
+
+     $OUT;
+}

@@ -1,8 +1,0 @@
-#
-# 60allowoverride 
-#
-{
-    $OUT = '    AllowOverride None'
-}
-
-
