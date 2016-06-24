@@ -56,7 +56,7 @@ class Modify extends \Nethgui\Controller\Table\Modify
                 ->setDefaultValue('PasswordStatus', 'disabled')
                 ->setDefaultValue('Access', 'private')
                 ->setDefaultValue('ForceSslStatus', 'disabled')
-                ->setDefaultValue('FtpStatus', 'disabled')
+                ->setDefaultValue('FtpStatus', 'enabled')
                 ->setDefaultValue('FtpPassword', '')
                 ->setDefaultValue('CreateHostRecords', '1')
         ;
@@ -156,6 +156,8 @@ class Modify extends \Nethgui\Controller\Table\Modify
         // avoid "Cannot redeclare class Nethgui\Controller\Table\PluggableAction" error:
         $view->setTemplate('NethServer\Template\VirtualHosts\Modify');
         $view['SslCertificateDatasource'] = array_merge(array(array('', $view->translate('Default_Ssl_certificate_label'))), $this->getSslCertificateDatasource());
+        $view['FtpUserName'] = $view['name'];
+        $view['HttpUserName'] = $view['name'];
     }
 
 }
