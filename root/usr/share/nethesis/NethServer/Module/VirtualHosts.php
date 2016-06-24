@@ -32,7 +32,7 @@ class VirtualHosts extends \Nethgui\Controller\TableController
 
     protected function initializeAttributes(\Nethgui\Module\ModuleAttributesInterface $base)
     {
-        return \Nethgui\Module\SimpleModuleAttributesProvider::extendModuleAttributes($base, 'Management');
+        return \Nethgui\Module\CompositeModuleAttributesProvider::extendModuleAttributes($base, 'Management')->extendFromComposite($this);
     }
 
     public function initialize()
@@ -47,9 +47,9 @@ class VirtualHosts extends \Nethgui\Controller\TableController
         $this
                 ->setTableAdapter($this->getPlatform()->getTableAdapter('vhosts', 'vhost'))
                 ->setColumns($columns)
-                ->addTableAction(new \NethServer\Module\VirtualHosts\Modify('create'))
+                ->addTableActionPluggable(new \NethServer\Module\VirtualHosts\Modify('create'), 'ModifyPlugin')
                 ->addTableAction(new \Nethgui\Controller\Table\Help('Help'))
-                ->addRowAction(new \NethServer\Module\VirtualHosts\Modify('update'))
+                ->addRowActionPluggable(new \NethServer\Module\VirtualHosts\Modify('update'), 'ModifyPlugin')
                 ->addRowAction(new \NethServer\Module\VirtualHosts\Toggle('enable'))
                 ->addRowAction(new \NethServer\Module\VirtualHosts\Toggle('disable'))
                 ->addRowAction(new \NethServer\Module\VirtualHosts\Modify('delete'))
@@ -70,19 +70,21 @@ class VirtualHosts extends \Nethgui\Controller\TableController
             unset($cellView['disable']);
         } elseif ($values['status'] === 'enabled') {
             unset($cellView['enable']);
-        }        
+        }
         return $cellView;
     }
 
     public function prepareViewForColumnKey(\Nethgui\Controller\Table\Read $action, \Nethgui\View\ViewInterface $view, $key, $values, &$rowMetadata)
-    {       
+    {
         if ($values['status'] === 'disabled') {
             $rowMetadata['rowCssClass'] = trim($rowMetadata['rowCssClass'] . ' user-locked');
         }
         return strval($key);
     }
 
-    public function prepareViewForColumnServerNames(\Nethgui\Controller\Table\Read $action, \Nethgui\View\ViewInterface $view, $key, $values, &$rowMetadata) {
+    public function prepareViewForColumnServerNames(\Nethgui\Controller\Table\Read $action, \Nethgui\View\ViewInterface $view, $key, $values, &$rowMetadata)
+    {
         return str_replace(',', ', ', $values['ServerNames']);
     }
+
 }

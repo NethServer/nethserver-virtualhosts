@@ -21,3 +21,4 @@ $L['ToggleEnable_text'] = 'The virtual host configuration `${0}` is disabled, th
 $L['ToggleEnable_header'] = 'Disable virtual host `${0}`?';
 $L['ToggleEnable_text'] = 'The virtual host configuration `${0}` is enabled, thus the web site is published. Do you want to disable it?';
 $L['Default_Ssl_certificate_label'] = 'Default certificate';
+$L['Basic_tab_title'] = 'General';

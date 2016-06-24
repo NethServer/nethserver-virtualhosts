@@ -153,6 +153,8 @@ class Modify extends \Nethgui\Controller\Table\Modify
     public function prepareView(\Nethgui\View\ViewInterface $view)
     {
         parent::prepareView($view);
+        // avoid "Cannot redeclare class Nethgui\Controller\Table\PluggableAction" error:
+        $view->setTemplate('NethServer\Template\VirtualHosts\Modify');
         $view['SslCertificateDatasource'] = array_merge(array(array('', $view->translate('Default_Ssl_certificate_label'))), $this->getSslCertificateDatasource());
     }
 
