@@ -25,16 +25,14 @@ perl createlinks
 %install
 rm -rf %{buildroot}
 (cd root   ; find . -depth -print | cpio -dump %{buildroot})
-%{genfilelist} %{buildroot} \
-    > %{name}-%{version}-%{release}-filelist
-echo "%doc COPYING"          >> %{name}-%{version}-%{release}-filelist
+%{genfilelist} %{buildroot} > %{name}-%{version}-%{release}-filelist
 
 %clean 
 rm -rf %{buildroot}
 
 %files -f %{name}-%{version}-%{release}-filelist
 %defattr(-,root,root)
+%doc COPYING
 %dir %{_nseventsdir}/%{name}-update
-
 
 %changelog
