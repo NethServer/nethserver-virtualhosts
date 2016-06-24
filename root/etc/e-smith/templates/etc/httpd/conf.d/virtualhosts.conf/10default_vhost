@@ -1,0 +1,12 @@
+#
+# 10default_vhost
+#
+{
+    use esmith::ConfigDB;
+    my $vdb = esmith::ConfigDB->open_ro('vhosts') || die("Can't open vhosts db");
+    if(grep { ($_->prop('status') || '') eq 'enabled' } $vdb->get_all_by_prop('type'=>'vhost') ) {
+        $OUT = "<VirtualHost _default_:80>\n\n</VirtualHost>\n";
+    }
+    return $OUT;
+}
+
