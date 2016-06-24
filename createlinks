@@ -54,14 +54,12 @@ event_actions('vhost-delete', qw(
 	     nethserver-virtualhosts-delete 30
              nethserver-virtualhosts-ftp-save 60
 ));
-event_templates('vhost-modify', qw(
-                /etc/httpd/conf.d/virtualhosts.conf
+event_templates('vhost-delete', qw(
+    /etc/httpd/conf.d/virtualhosts.conf
 ));
-event_services('vhost-modify', qw(
-               httpd reload
+event_services('vhost-delete', qw(
+    httpd reload
 ));
-
-
 
 #--------------------------------------------------
 # actions for nethserver-virtualhosts-update event
