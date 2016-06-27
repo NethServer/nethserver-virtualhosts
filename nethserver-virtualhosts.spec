@@ -34,5 +34,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %doc COPYING
 %dir %{_nseventsdir}/%{name}-update
+%config(noreplace) %ghost %attr (0644,root,root) %{_sysconfdir}/httpd/conf.d/virtualhosts.conf
 
 %changelog

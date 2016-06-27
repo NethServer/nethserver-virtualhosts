@@ -1,9 +1,7 @@
+#
+# 20virtual_hosts -- expand extra virtual hosts 
+#
 {
-    #
-    # 99virtual_hosts -- expand extra virtual hosts under conf.d/
-    # directory
-    #
-
     use esmith::templates;
     use esmith::ConfigDB;
     my $vdb = esmith::ConfigDB->open_ro('vhosts') || die("Can't open vhosts db");
