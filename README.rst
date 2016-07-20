@@ -1,9 +1,11 @@
-#Virtual hosts
+nethserver-virtualhosts
+=======================
 
-## Database
+Database
+--------
 
 A new ``vhost`` database is defined by this module. It contains records of type 
-``vhost``, similar to:
+``vhost``, similar to: ::
 
     vh1=vhost
         Access=private
@@ -17,11 +19,12 @@ A new ``vhost`` database is defined by this module. It contains records of type
         SslCertificate=/etc/pki/tls/certs/NSRV.crt
         status=enabled
 
-##UI plugins
+UI plugins
+----------
 
 The Modify action can be extended to display additional tabs, by adding a 
 controller and the respective template under ``ModifyPlugin/`` directories.
 
-See the [Samba User plugin][1] on NethServer 6.x as an example
+See the `Samba User plugin`_ on NethServer 6.x as an example
 
-   [1]: https://github.com/NethServer/nethserver-samba/blob/9012fbcd0cb3db60d8fb0ddfcd3db9e39a01956c/root/usr/share/nethesis/NethServer/Module/User/Plugin/Samba.php
+.. _`Samba User plugin`: https://github.com/NethServer/nethserver-samba/blob/9012fbcd0cb3db60d8fb0ddfcd3db9e39a01956c/root/usr/share/nethesis/NethServer/Module/User/Plugin/Samba.php
