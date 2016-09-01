@@ -1,6 +1,6 @@
 Name: nethserver-virtualhosts
 Summary: Virtual hosts configuration
-Version: 1.0.0
+Version: 1.0.1
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -37,6 +37,9 @@ rm -rf %{buildroot}
 %config(noreplace) %ghost %attr (0644,root,root) %{_sysconfdir}/httpd/conf.d/virtualhosts.conf
 
 %changelog
+* Thu Sep 01 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.1-1
+- Apache vhost-default template expansion - NethServer/dev#5088
+
 * Thu Jul 07 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.0-1
 - First NS7 release
 
