@@ -88,6 +88,16 @@ event_actions($event, qw(
              nethserver-virtualhosts-ftp-chroot 30
 ));
 
+#--------------------------------------------------
+# actions for vhost-migrate-ibay event
+#--------------------------------------------------
+
+$event = 'vhost-migrate-ibay';
+
+event_actions($event, qw(
+    nethserver-virtualhosts-migrate-ibay 30
+));
+
 
 
 #--------------------------------------------------
