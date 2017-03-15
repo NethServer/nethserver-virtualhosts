@@ -32,31 +32,45 @@ my $src_db = esmith::ConfigDB->open('accounts') or die("Can't open accounts db")
 my $dst_db = esmith::ConfigDB->open('vhosts')  or die("Can't open vhosts db");
 
 my $ibay = $src_db->get($ibay_name) or die ("Shared folder '$ibay_name' not found");
+my $ibay_dir = "/var/lib/nethserver/ibay/$ibay_name";
 my $http_status = $ibay->prop('HttpStatus') || 'disabled';
 my $alias = $ibay->prop('HttpVirtualHost') || '__ANY__';
 my $subfolder = $ibay->prop('HttpAliasCustom') || '';
+my %props;
 
 if ($http_status eq 'disabled') {
     die("The original shared folder '$ibay_name' is not configured for HTTP access");
 }
 if ($alias eq '__ANY__') {
-    die("The original shared folder '$ibay_name' can't be mapped to a virtual host");
+    $subfolder = $ibay_name;
+    $ibay_name = 'shared-folder-migration';
+    %props = (
+        type => 'vhost', status => 'enabled', SslCertificate => '', FtpStatus => 'disabled',
+        Access => 'public', 
+        Description => "Catch-all migrated shared folers [migration]",
+        ForceSslStatus => 'disabled',
+        PasswordStatus => 'disabled',
+        PasswordValue => '',
+        ServerNames => '__ANY__',
+        status => 'enabled',
+    );
+
+} else {
+    %props = (
+        type => 'vhost', status => 'enabled', SslCertificate => '', FtpStatus => 'disabled',
+        Access => $ibay->prop('HttpAccess') || 'public', 
+        Description => $ibay->prop('Description'). " [migration]",
+        ForceSslStatus => ( $ibay->prop('HttpForceSsl') || 'disabled' ),
+        PasswordStatus => ( $ibay->prop('HttpPasswordStatus') || 'disabled' ),
+        PasswordValue => ( $ibay->prop('HttpPasswordValue') || '' ),
+        ServerNames => $alias,
+        status => 'enabled'
+    );
 }
 
-my %props = (
-  type => 'vhost', status => 'enabled', SslCertificate => '', FtpStatus => 'disabled',
-  Access => $ibay->prop('HttpAccess') || 'public', 
-  Description => $ibay->prop('Description'). " [migration]",
-  ForceSslStatus => ( $ibay->prop('HttpForceSsl') || 'disabled' ),
-  PasswordStatus => ( $ibay->prop('HttpPasswordStatus') || 'disabled' ),
-  PasswordValue => ( $ibay->prop('HttpPasswordValue') || '' ),
-  ServerNames => $alias
-);
-
-$dst_db->new_record($ibay_name, \%props) or ("Cant create new virtual host record '$ibay_name': $!");
+$dst_db->new_record($ibay_name, \%props) or ("Can't create new virtual host record '$ibay_name': $!");
 
 my $vhost_dir = "/var/lib/nethserver/vhost/$ibay_name";
-my $ibay_dir = "/var/lib/nethserver/ibay/$ibay_name";
 if ($subfolder) {
     system("/usr/bin/mkdir -p $vhost_dir");
     system("/usr/bin/mv -v $ibay_dir $vhost_dir/$subfolder");
