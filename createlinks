@@ -68,6 +68,7 @@ event_services('vhost-delete', qw(
 my $event = 'nethserver-virtualhosts-update';
 event_templates($event, qw(
     /etc/httpd/conf.d/virtualhosts.conf
+    /etc/backup-data.d/nethserver-virtualhosts.include
 ));
 
 event_actions($event, qw(
