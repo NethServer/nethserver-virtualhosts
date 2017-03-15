@@ -47,6 +47,13 @@ Enable/Disable
 When a virtual host is *disabled* it cannot be accessed in any way. By default
 a newly created virtual host is in *enabled* state.
 
+Default virtual host
+--------------------
+
+This virtual host is always enabled and can't be deleted.
+If FTP access is enabled, the user will be chrooted inside ``/var/www/html`` directory.
+It may contain data migrated from the old-format shared folder.
+
 .. raw:: html
 
    {{{INCLUDE NethServer_Module_VirtualHosts_ModifyPlugin_*.html}}}

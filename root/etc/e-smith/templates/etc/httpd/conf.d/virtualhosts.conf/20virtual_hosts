@@ -11,7 +11,7 @@
 	my @ports = (443, 80);
 
         #skip if vhost status is not enabled
-        if($vhostData{status} ne 'enabled'){
+        if( !defined($vhostData{status}) || $vhostData{status} ne 'enabled' ){
             next;
         }
  

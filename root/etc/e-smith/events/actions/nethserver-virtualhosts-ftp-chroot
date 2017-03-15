@@ -15,6 +15,10 @@ if ($usertype ne 'virtual') {
 for my $vhost ( $adb->get_all_by_prop( type => 'vhost' ) )
 {
     open (USER, '>>/etc/vsftpd/users/'.$vhost->key);
-    print USER "local_root=/var/lib/nethserver/vhost/".$vhost->key."\n";
+    if ($vhost->key eq 'default') {
+        print USER "local_root=/var/www/html\n";
+    } else {
+        print USER "local_root=/var/lib/nethserver/vhost/".$vhost->key."\n";
+    }
     close (USER);
 }

@@ -68,6 +68,7 @@ event_services('vhost-delete', qw(
 my $event = 'nethserver-virtualhosts-update';
 event_templates($event, qw(
     /etc/httpd/conf.d/virtualhosts.conf
+    /etc/backup-data.d/nethserver-virtualhosts.include
 ));
 
 event_actions($event, qw(
@@ -86,6 +87,16 @@ $event = 'nethserver-vsftpd-save';
 
 event_actions($event, qw(
              nethserver-virtualhosts-ftp-chroot 30
+));
+
+#--------------------------------------------------
+# actions for vhost-migrate-ibay event
+#--------------------------------------------------
+
+$event = 'vhost-migrate-ibay';
+
+event_actions($event, qw(
+    nethserver-virtualhosts-migrate-ibay 30
 ));
 
 

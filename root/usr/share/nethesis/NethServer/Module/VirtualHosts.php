@@ -53,14 +53,10 @@ class VirtualHosts extends \Nethgui\Controller\TableController
                 ->addRowAction(new \NethServer\Module\VirtualHosts\Toggle('enable'))
                 ->addRowAction(new \NethServer\Module\VirtualHosts\Toggle('disable'))
                 ->addRowAction(new \NethServer\Module\VirtualHosts\Modify('delete'))
+                ->addRowAction(new \NethServer\Module\VirtualHosts\ModifyDefault())
         ;
 
         parent::initialize();
-    }
-
-    public function onParametersSaved(\Nethgui\Module\ModuleInterface $currentAction, $changes, $parameters)
-    {
-        #    $this->getPlatform()->signalEvent('static-routes-save@post-process');
     }
 
     public function prepareViewForColumnActions(\Nethgui\Controller\Table\Read $action, \Nethgui\View\ViewInterface $view, $key, $values, &$rowMetadata)
@@ -71,6 +67,17 @@ class VirtualHosts extends \Nethgui\Controller\TableController
         } elseif ($values['status'] === 'enabled') {
             unset($cellView['enable']);
         }
+        
+        # Protect 'default' virtual host
+        if ($key == 'default') {
+            unset($cellView['delete']);
+            unset($cellView['enable']);
+            unset($cellView['disable']);
+            unset($cellView['update']);
+        } else {
+            unset($cellView['ModifyDefault']);
+        }
+
         return $cellView;
     }
 
@@ -84,7 +91,11 @@ class VirtualHosts extends \Nethgui\Controller\TableController
 
     public function prepareViewForColumnServerNames(\Nethgui\Controller\Table\Read $action, \Nethgui\View\ViewInterface $view, $key, $values, &$rowMetadata)
     {
-        return str_replace(',', ', ', $values['ServerNames']);
+        if ($values['ServerNames']) {
+            return str_replace(',', ', ', $values['ServerNames']);
+        } else {
+            return $view->translate('any_label');
+        }
     }
 
 }
