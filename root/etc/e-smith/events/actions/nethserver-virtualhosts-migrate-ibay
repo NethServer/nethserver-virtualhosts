@@ -73,9 +73,11 @@ if ($subfolder) {
     }
     system("/usr/bin/mv -v $ibay_dir $vhost_dir/$subfolder");
     system("/usr/bin/chown -R ftp:apache $vhost_dir/$subfolder");
+    system("/usr/bin/setfacl -d -b -R $vhost_dir/$subfolder");
 } else {
     system("/usr/bin/mv -v $ibay_dir $vhost_dir");
     system("/usr/bin/chown -R ftp:apache $vhost_dir");
+    system("/usr/bin/setfacl -d -b -R $vhost_dir");
 }
 
 esmith::event::event_signal($event, $ibay_name);
