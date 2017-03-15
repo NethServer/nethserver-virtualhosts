@@ -26,3 +26,6 @@ $L['HttpUserName_label'] = 'User name';
 $L['FtpUserName_label'] = 'User name';
 $L['FtpPassword_label'] = 'Password';
 $L['ExtraFields_label'] = 'Additional actions';
+$L['any_label'] = 'Any';
+$L['ModifyDefault_label'] = 'Edit';
+$L['VirtualHostDefault_Update_Header'] = 'Edit default virtual host configuration';
