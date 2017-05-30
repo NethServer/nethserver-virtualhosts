@@ -1,6 +1,6 @@
 Name: nethserver-virtualhosts
 Summary: Virtual hosts configuration
-Version: 1.0.2
+Version: 1.0.3
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -37,6 +37,9 @@ rm -rf %{buildroot}
 %config(noreplace) %ghost %attr (0644,root,root) %{_sysconfdir}/httpd/conf.d/virtualhosts.conf
 
 %changelog
+* Tue May 30 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.3-1
+- Upgrade from NS 6 via backup and restore - NethServer/dev#5234
+
 * Wed Nov 02 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.2-1
 - Virtual host inline help does not include plugins - NethServer/dev#5138
 
