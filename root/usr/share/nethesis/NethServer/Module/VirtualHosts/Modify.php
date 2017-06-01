@@ -107,8 +107,8 @@ class Modify extends \Nethgui\Controller\Table\Modify
 
     public function writeServerNames($s)
     {
-        $v = $this->sanitizeServerNames($s);
-        return array($v);
+        $serverNames = explode(',', $this->sanitizeServerNames($s));
+        return array(implode(',', array_unique($serverNames)));
     }
 
     protected function sanitizeServerNames($s)
