@@ -79,7 +79,25 @@ class Modify extends \Nethgui\Controller\Table\Modify
             if ( ! $validHostname->evaluate($serverName)) {
                 $report->addValidationError($this, 'ServerNames', $validHostname);
             }
+            if($this->findServerName($serverName, array($this->parameters['name']))) {
+                $report->addValidationErrorMessage($this, 'ServerNames', 'valid_servername_already_used', array($serverName));
+            }
         }
+    }
+
+    private function findServerName($serverName, $ignoreList = array())
+    {
+        $results = array();
+        foreach($this->getParent()->getAdapter() as $vhost => $record) {
+            if(in_array($vhost, $ignoreList)) {
+                continue;
+            }
+            $serverNames = explode(',', $record['ServerNames']);
+            if(in_array($serverName, $serverNames)) {
+                $results[]=$serverName;
+            }
+        }
+        return array_unique($results);
     }
 
     public function readServerNames($v)
