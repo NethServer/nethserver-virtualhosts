@@ -1,6 +1,6 @@
 Name: nethserver-virtualhosts
 Summary: Virtual hosts configuration
-Version: 1.0.3
+Version: 1.0.4
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -37,6 +37,9 @@ rm -rf %{buildroot}
 %config(noreplace) %ghost %attr (0644,root,root) %{_sysconfdir}/httpd/conf.d/virtualhosts.conf
 
 %changelog
+* Wed Jun 07 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.4-1
+-  Same FQDN can be set to different virtualhosts - Bug NethServer/dev#5303
+
 * Tue May 30 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.3-1
 - Upgrade from NS 6 via backup and restore - NethServer/dev#5234
 
