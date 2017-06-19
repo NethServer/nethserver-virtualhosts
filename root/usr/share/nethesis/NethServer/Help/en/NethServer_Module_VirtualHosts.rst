@@ -34,6 +34,10 @@ Enable FTP access
     Allow uploading the web site contents via FTP, by providing the given
     credentials.
 
+Root directory file listings
+    This permits the server to generate a directory listing 
+    for a web site if no index.* is specified
+
 Create new
 ----------
 

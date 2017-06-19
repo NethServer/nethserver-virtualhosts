@@ -27,6 +27,9 @@ $basicInfo->insert($view->checkBox('Access', 'private')->setAttribute('unchecked
                     ->insert($view->textInput('PasswordValue'))
                 )
         ->insert($view->checkbox('ForceSslStatus', 'enabled')->setAttribute('uncheckedValue', 'disabled'))
+
+        ->insert($view->checkBox('Indexes', 'enabled')->setAttribute('uncheckedValue', 'disabled')) 
+
         ->insert($view->selector('SslCertificate', $view::SELECTOR_DROPDOWN))
         ->insert($view->fieldsetSwitch('FtpStatus', 'enabled', $view::FIELDSETSWITCH_CHECKBOX | $view::FIELDSETSWITCH_EXPANDABLE)
                 ->setAttribute('uncheckedValue', 'disabled')

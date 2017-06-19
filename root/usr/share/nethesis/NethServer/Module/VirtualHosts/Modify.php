@@ -45,6 +45,7 @@ class Modify extends \Nethgui\Controller\Table\Modify
             array('SslCertificate', Validate::ANYTHING, Table::FIELD),
             array('FtpStatus', Validate::SERVICESTATUS, Table::FIELD),
             array('FtpPassword', Validate::NOTEMPTY, Table::FIELD),
+            array('Indexes', Validate::SERVICESTATUS, Table::FIELD),
         );
 
         $this->setSchema($schema);
@@ -59,6 +60,7 @@ class Modify extends \Nethgui\Controller\Table\Modify
                 ->setDefaultValue('FtpStatus', 'enabled')
                 ->setDefaultValue('FtpPassword', '')
                 ->setDefaultValue('CreateHostRecords', '1')
+                ->setDefaultValue('Indexes', 'disabled')
         ;
 
         if ($this->getIdentifier() === 'delete') {
