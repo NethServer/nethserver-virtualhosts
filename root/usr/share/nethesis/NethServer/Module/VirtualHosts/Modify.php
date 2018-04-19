@@ -137,7 +137,7 @@ class Modify extends \Nethgui\Controller\Table\Modify
         $hostsDb = $this->getPlatform()->getDatabase('hosts');
         foreach ($serverList as $serverName) {
             if( ! $hostsDb->getKey($serverName)) {
-                $hostsDb->setKey($serverName, 'self', array('Description' => $this->parameters['Description'] || 'Virtual host'));
+                $hostsDb->setKey($serverName, 'self', array('Description' => $this->parameters['Description'] ?: 'Virtual host'));
             }
         }
 
