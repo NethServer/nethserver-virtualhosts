@@ -75,6 +75,13 @@ class Modify extends \Nethgui\Controller\Table\Modify
         if ( ! $this->getRequest()->isMutation()) {
             return;
         }
+
+        // Key validator 
+        if ($this->getIdentifier() === 'create' && $this->getPlatform()->getDatabase('vhosts')->getKey($this->parameters['name']) ) {
+           $report->addValidationErrorMessage($this, 'name', 'Name_Already_Exists', array($this->parameters['name']));
+       }
+
+
         $serverList = explode(',', $this->sanitizeServerNames($this->parameters['ServerNames']));
         $validHostname = $this->createValidator()->hostname();
         foreach ($serverList as $serverName) {

@@ -31,3 +31,4 @@ $L['ModifyDefault_label'] = 'Edit';
 $L['VirtualHostDefault_Update_Header'] = 'Edit default virtual host configuration';
 $L['valid_servername_already_used'] = 'Name "${0}" already used';
 $L['Indexes_label'] = 'Root directory file listings';
+$L['Name_Already_Exists'] = 'Name `${0}` already used';
