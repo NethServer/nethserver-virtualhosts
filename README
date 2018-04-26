@@ -1,0 +1,11 @@
+nethserver-virtualhosts
+-----------------------
+
+Moved to
+
+https://github.com/nethserver/nethserver-httpd
+
+This repository has been merged into nethserver-httpd. The RPM package 
+nethserver-httpd-virtualhosts now provides the nethserver-virtualhosts 
+symbol.
+
